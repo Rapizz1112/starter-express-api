@@ -1,5 +1,18 @@
+
+'use strict';
+
+const express = require('express');
+const path = require('path');
+const { createServer } = require('http');
+
 const WebSocket = require('ws')
-const wss = new WebSocket.Server({port: 8080}, () => {
+
+
+const app = express();
+app.use(express.static(path.join(__dirname, '/public')));
+
+const server = createServer(app);
+const wss = new WebSocket.Server({ server }, () => {
     console.log('server started');
 })
 
@@ -32,6 +45,9 @@ wss.on('connection', (ws) => {
 wss.on('listening', () => {
     console.log('server is listening on port 8080')
 })
+server.listen(8080, function () {
+    console.log('Listening on http://0.0.0.0:8080');
+  });
 function broadcastUpdate () {
     wss.clients.forEach(function each (client) {
       // filter disconnected clients
